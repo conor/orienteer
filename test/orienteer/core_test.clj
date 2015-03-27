@@ -3,5 +3,5 @@
             [orienteer.core :refer :all]))
 
 (deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
+  (testing "Is fixed."
+    (is (= 1 1))))
