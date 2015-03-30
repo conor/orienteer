@@ -1,10 +1,10 @@
 (ns orienteer.core
-  (:require [orienteer.conversions :refer [degs->rads]]))
+  (:require [orienteer.conversions :refer [degs->rads rads->degs]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Formula constants
 (def earth-radius 6372.8) ;; Earths radius in kms
-
+(def compass-points ["N" "NE" "E" "SE" "S" "SW" "W" "NW"])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Haversine method for calculating distances
@@ -40,6 +40,28 @@
        (Math/asin (Math/sqrt (haversine-a lat1 lat2 dlat dlon))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Bearing functions
+
+(defn bearing-formula
+  [x y]
+  (mod (+ (- 90 (rads->degs (Math/atan2 x y)))
+          360)
+       360))
+
+(defmulti bearing-calc :method)
+
+(defmethod bearing-calc :linear
+  [{y :dlon x :dlat}]
+  (bearing-formula x y))
+
+(defmethod bearing-calc :spherical
+  [{dlon :dlon dlat :dlat lat1 :lat1 lat2 :lat2}]
+  (let [x (- (* (Math/cos lat1) (Math/sin lat2))
+             (* (Math/sin lat1) (Math/cos lat2) (Math/cos dlon)))
+        y (* (Math/sin dlon) (Math/cos lat2))]
+    (bearing-formula x y)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Public functions
 
 (defn distance-between
@@ -49,5 +71,21 @@
     0
     (haversine pt1 pt2)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Bearing functions
+(defn bearing-between
+  "Returns the bearing between two points in degrees.
+  Method has two options :linear and :spherical.
+  It defaults to linear."
+  [pt1 pt2 method]
+  (let [lat1 (degs->rads (first pt1))
+        lat2 (degs->rads (first pt2))
+        dlat (degs->rads (dlat pt1 pt2))
+        dlon (degs->rads (dlon pt1 pt2))]
+    (bearing-calc {:method method
+                   :lat1 lat1 :lat2 lat2
+                   :dlat dlat :dlon dlon})))
+
+(defn bearing->compass
+  "Convert a bearing to a point on a compass"
+  [bearing]
+  (let [seg-size (/ 360 (count compass-points))]
+    (nth compass-points (/ (+ bearing (/ seg-size 2)) seg-size))))
