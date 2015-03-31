@@ -22,7 +22,4 @@
     (is (= 776.1499686326972 (distance-between dublin paris))))
   (testing "Calculate the linear bearing between two points"
     (is (= 117.64726514103779 (bearing-between dublin paris :linear)))
-    (is (= 126.45182997277647 (bearing-between dublin paris :spherical))))
-  (testing "Calculate the compass bearing between two points"
-    (is (= "SE" (bearing->compass (bearing-between dublin paris :linear))))
-    (is (= "SE" (bearing->compass (bearing-between dublin paris :spherical))))))
+    (is (= 126.45182997277647 (bearing-between dublin paris :spherical)))))

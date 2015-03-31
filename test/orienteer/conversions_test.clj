@@ -23,4 +23,8 @@
   (testing "Convert km -> nm"
     (is (= nm (km->nm km))))
   (testing "Convert nm -> km"
-    (is (= km (nm->km nm)))))
+    (is (= km (nm->km nm))))
+  (testing "Calculate the compass bearing between two points"
+    (is (= "N" (bearing->compass 0)))
+    (is (= "S" (bearing->compass 180)))
+    (is (= "SE" (bearing->compass 126.45182997277647)))))

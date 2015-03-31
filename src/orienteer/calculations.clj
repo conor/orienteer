@@ -6,7 +6,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def earth-radius 6372.8) ;; Earths radius in kms
-(def compass-points ["N" "NE" "E" "SE" "S" "SW" "W" "NW"])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Haversine method for calculating distances
@@ -88,9 +87,3 @@
     (bearing-calc {:method method
                    :lat1 lat1 :lat2 lat2
                    :dlat dlat :dlon dlon})))
-
-(defn bearing->compass
-  "Convert a bearing to a point on a compass"
-  [bearing]
-  (let [seg-size (/ 360 (count compass-points))]
-    (nth compass-points (/ (+ bearing (/ seg-size 2)) seg-size))))
