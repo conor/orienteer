@@ -1,6 +1,6 @@
-(ns orienteer.core-test
+(ns orienteer.calculations-test
   (:require [clojure.test :refer :all]
-            [orienteer.core :refer :all]))
+            [orienteer.calculations :refer :all]))
 
 ;; Data
 (def dublin [53.3498053 -6.260309699999993])
